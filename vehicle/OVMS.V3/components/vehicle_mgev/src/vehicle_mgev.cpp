@@ -152,29 +152,29 @@ OvmsVehicleMgEv::OvmsVehicleMgEv()
     // Allow unlimited polling per second
     PollSetThrottling(0u);
     
-    m_bat_pack_voltage = MyMetrics.InitFloat("xmg.v.bat.voltage.bms", 0, SM_STALE_HIGH, Volts);
-    m_bat_voltage_vcu = MyMetrics.InitFloat("xmg.v.bat.voltage.vcu", 0, SM_STALE_HIGH, Volts);
-    m_bat_coolant_temp = MyMetrics.InitFloat("xmg.v.bat.coolant.temp", 0, SM_STALE_HIGH, Celcius);
-    m_bat_resistance = MyMetrics.InitFloat("xmg.v.bat.resistance", SM_STALE_MAX, SM_STALE_MAX);
-    m_bms_max_cell_voltage = MyMetrics.InitFloat("xmg.v.bms.cell.voltage.max", 0, SM_STALE_HIGH, Volts);
-    m_bms_min_cell_voltage = MyMetrics.InitFloat("xmg.v.bms.cell.voltage.min", 0, SM_STALE_HIGH, Volts);
-    m_bms_main_relay_b = MyMetrics.InitBool("xmg.v.bms.mainrelay.b", SM_STALE_MAX, SM_STALE_MAX);
-    m_bms_main_relay_g = MyMetrics.InitBool("xmg.v.bms.mainrelay.g", SM_STALE_MAX, SM_STALE_MAX);
-    m_bms_main_relay_p = MyMetrics.InitBool("xmg.v.bms.mainrelay.p", SM_STALE_MAX, SM_STALE_MAX);
+    m_bat_pack_voltage = MyMetrics.InitFloat("xmg.v.bat.voltage.bms", SM_STALE_HIGH, 0, Volts);
+    m_bat_voltage_vcu = MyMetrics.InitFloat("xmg.v.bat.voltage.vcu", SM_STALE_HIGH, 0, Volts);
+    m_bat_coolant_temp = MyMetrics.InitFloat("xmg.v.bat.coolant.temp", SM_STALE_HIGH, 0, Celcius);
+    m_bat_resistance = MyMetrics.InitFloat("xmg.v.bat.resistance", SM_STALE_MAX, 0);
+    m_bms_max_cell_voltage = MyMetrics.InitFloat("xmg.v.bms.cell.voltage.max", SM_STALE_HIGH, 0, Volts);
+    m_bms_min_cell_voltage = MyMetrics.InitFloat("xmg.v.bms.cell.voltage.min", SM_STALE_HIGH, 0, Volts);
+    m_bms_main_relay_b = MyMetrics.InitBool("xmg.v.bms.mainrelay.b", SM_STALE_MAX, false);
+    m_bms_main_relay_g = MyMetrics.InitBool("xmg.v.bms.mainrelay.g", SM_STALE_MAX, false);
+    m_bms_main_relay_p = MyMetrics.InitBool("xmg.v.bms.mainrelay.p", SM_STALE_MAX, false);
     m_bms_time = MyMetrics.InitString("xmg.v.bms.time", 0, "");
-    m_bat_error = MyMetrics.InitInt("xmg.v.bat.error", SM_STALE_MAX, SM_STALE_MAX);
-    m_env_face_outlet_temp = MyMetrics.InitFloat("xmg.v.env.faceoutlet.temp", 0, SM_STALE_HIGH, Celcius);
-    m_radiator_fan = MyMetrics.InitBool("xmg.v.radiator.fan", SM_STALE_MAX, SM_STALE_MAX);
-    m_dcdc_load = MyMetrics.InitFloat("xmg.v.dcdc.load", 0, SM_STALE_HIGH, Percentage);
-    m_vcu_dcdc_mode = MyMetrics.InitInt("xmg.v.vcu.dcdc.mode", SM_STALE_MAX, SM_STALE_MAX);
-    m_vcu_dcdc_input_current = MyMetrics.InitFloat("xmg.v.vcu.dcdc.input.current", 0, SM_STALE_HIGH, Amps);
-    m_vcu_dcdc_input_voltage = MyMetrics.InitFloat("xmg.v.vcu.dcdc.input.voltage", 0, SM_STALE_HIGH, Volts);
-    m_vcu_dcdc_output_current = MyMetrics.InitFloat("xmg.v.vcu.dcdc.output.current", 0, SM_STALE_HIGH, Amps);
-    m_vcu_dcdc_output_voltage = MyMetrics.InitFloat("xmg.v.vcu.dcdc.output.voltage", 0, SM_STALE_HIGH, Volts);
-    m_vcu_dcdc_temp = MyMetrics.InitFloat("xmg.v.vcu.dcdc.temp", 0, SM_STALE_HIGH, Celcius);
-    m_soc_raw = MyMetrics.InitFloat("xmg.v.soc.raw", 0, SM_STALE_HIGH, Percentage);
-    m_motor_coolant_temp = MyMetrics.InitFloat("xmg.v.m.coolant.temp", 0, SM_STALE_HIGH, Celcius);
-    m_motor_torque = MyMetrics.InitFloat("xmg.v.m.torque", 0, SM_STALE_HIGH, Nm);
+    m_bat_error = MyMetrics.InitInt("xmg.v.bat.error", SM_STALE_MAX, 0);
+    m_env_face_outlet_temp = MyMetrics.InitFloat("xmg.v.env.faceoutlet.temp", SM_STALE_HIGH, 0, Celcius);
+    m_radiator_fan = MyMetrics.InitBool("xmg.v.radiator.fan", SM_STALE_MAX, false);
+    m_dcdc_load = MyMetrics.InitFloat("xmg.v.dcdc.load", SM_STALE_HIGH, 0, Percentage);
+    m_vcu_dcdc_mode = MyMetrics.InitInt("xmg.v.vcu.dcdc.mode", SM_STALE_MAX, 0);
+    m_vcu_dcdc_input_current = MyMetrics.InitFloat("xmg.v.vcu.dcdc.input.current", SM_STALE_HIGH, 0, Amps);
+    m_vcu_dcdc_input_voltage = MyMetrics.InitFloat("xmg.v.vcu.dcdc.input.voltage", SM_STALE_HIGH, 0, Volts);
+    m_vcu_dcdc_output_current = MyMetrics.InitFloat("xmg.v.vcu.dcdc.output.current", SM_STALE_HIGH, 0, Amps);
+    m_vcu_dcdc_output_voltage = MyMetrics.InitFloat("xmg.v.vcu.dcdc.output.voltage", SM_STALE_HIGH, 0, Volts);
+    m_vcu_dcdc_temp = MyMetrics.InitFloat("xmg.v.vcu.dcdc.temp", SM_STALE_HIGH, 0, Celcius);
+    m_soc_raw = MyMetrics.InitFloat("xmg.v.soc.raw", SM_STALE_HIGH, 0, Percentage);
+    m_motor_coolant_temp = MyMetrics.InitFloat("xmg.v.m.coolant.temp", SM_STALE_HIGH, 0, Celcius);
+    m_motor_torque = MyMetrics.InitFloat("xmg.v.m.torque", SM_STALE_HIGH, 0, Nm);
     m_ignition_state = MyMetrics.InitInt("xmg.v.ignition.state", SM_STALE_MAX, SM_STALE_MAX);
     m_poll_state_metric = MyMetrics.InitInt("xmg.state.poll", SM_STALE_MAX, m_poll_state);
     m_gwm_state = MyMetrics.InitInt("xmg.state.gwm", SM_STALE_MAX, SM_STALE_MAX);
@@ -186,8 +186,8 @@ OvmsVehicleMgEv::OvmsVehicleMgEv()
     m_avg_consumption = MyMetrics.InitFloat("xmg.p.avg.consumption", SM_STALE_MID, 165.0, WattHoursPK);
     m_batt_capacity = MyMetrics.InitFloat("xmg.b.capacity", SM_STALE_MID, 42.5, kWh);
     m_max_dc_charge_rate = MyMetrics.InitFloat("xmg.c.max.dc.charge", SM_STALE_MID, 82.0, kW);
-    m_dod_lower = MyMetrics.InitFloat("xmg.b.dod.lower", SM_STALE_MAX, 940.0);
-    m_dod_upper = MyMetrics.InitFloat("xmg.b.dod.upper", SM_STALE_MAX, 25.0);
+    m_dod_lower = MyMetrics.InitFloat("xmg.b.dod.lower", SM_STALE_MAX, 25.0);
+    m_dod_upper = MyMetrics.InitFloat("xmg.b.dod.upper", SM_STALE_MAX, 940.0);
 
     DRLFirstFrameSentCallback = std::bind(&OvmsVehicleMgEv::DRLFirstFrameSent, this, std::placeholders::_1, std::placeholders::_2);
     
