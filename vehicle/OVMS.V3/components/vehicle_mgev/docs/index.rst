@@ -67,6 +67,14 @@ Both Short Range (49kWh) and Long Range (57kWh) MG5 Variants are supported and c
 The web UI features a configuration page for Manual Polling in the vehicle menu.
 The default setting is for Manual Polling to be on. If this is deselected, the polling will be automatic and will start when the vehicle is in READY or CHARGING and stop automatically when the vehicle is turned off to save the 12V battery. This may cause alarms on the MG5 when locked and charging. If this is a problem, please use Manual Polling.
 
+**SOC** - The MG5 reads SoC from the BMS with UDS 0x22 DID 0xB046 (as the ZS EV
+does), scaled to the displayed SoC by the BMS DoD limits: lower 36, upper 950
+(LR) or 994 (SR). Where these do not match the dash they can be overridden with
+``config set xmg mg5.dod.lower <n>`` and ``config set xmg mg5.dod.upper <n>``
+(B046 reads 10 x the raw SoC %; ``bms.dod.*``, used by the other variants, is
+ignored on the MG5). The older OBD PID 0x5B is still polled for any
+BMS that only answers that; a 2022 MG5 LR refuses it (serviceNotSupported).
+
 **Manual Polling** - As the alarm sometimes goes off when the MG5 is locked and charging, the MG5 variant starts up with the polls turned off. Polls can be turned on with the `xmg polls on` command in the shell or via a message in the app. You can also turn on polls by pressing the boot of the car in the app and pressing wakeup. Polls will only start when the car is in ready or charging. When the car is turned off again or charging is turned off, the polls will stop again. Polls can be manually stopped with the `xmg polls off` command.
 
 ------------------------

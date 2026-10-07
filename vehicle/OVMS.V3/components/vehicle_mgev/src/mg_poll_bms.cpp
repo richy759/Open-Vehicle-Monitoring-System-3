@@ -106,6 +106,12 @@ void OvmsVehicleMgEv::IncomingBmsPoll(
         case socPid:
         {
             //ESP_LOGI(TAG, "BMS Poll Received PID: %02x %02x", pid, data[0]);
+            // Where the BMS also answers 0xB046 (batterySoCPid), that SoC wins:
+            // the two use different scales and would otherwise alternate.
+            if (m_soc_b046_seen)
+            {
+                break;
+            }
             float currentSoc = data[0] * 100.0 / 255.0;
             if(currentSoc != StandardMetrics.ms_v_bat_soc->AsFloat()) {
                 ESP_LOGI(TAG, "Current SOC = %0.2f%%", currentSoc);
@@ -236,6 +242,7 @@ void OvmsVehicleMgEv::IncomingBmsPoll(
         {
             // Get raw value to display on Charging Metrics Page
             m_soc_raw->SetValue(value / 10.0f);
+            m_soc_b046_seen = true;
             auto scaledSoc = calculateSoc(value);
             if (StandardMetrics.ms_v_charge_inprogress->AsBool())
             {
@@ -368,11 +375,25 @@ void OvmsVehicleMgEv::SetBmsStatus(uint8_t status)
 
 float OvmsVehicleMgEv::calculateSoc(uint16_t value)
 {
-    float lowerlimit = MyConfig.GetParamValueInt("xmg","bms.dod.lower");
-    float upperlimit = MyConfig.GetParamValueInt("xmg","bms.dod.upper");
+    // The xmg DoD config wins where set (bms.dod.* from the web UI or MG4,
+    // mg5.dod.* on the MG5); otherwise the limits the variant put in
+    // xmg.b.dod.* (MG5, ZS EV 2). Unset config used to read as 0/0 here, so a
+    // variant without it got no usable SoC.
+    float lowerlimit = MyConfig.GetParamValueFloat("xmg", m_dod_lower_param, m_dod_lower->AsFloat());
+    float upperlimit = MyConfig.GetParamValueFloat("xmg", m_dod_upper_param, m_dod_upper->AsFloat());
     ESP_LOGD(TAG, "BMS Limits: Lower = %f Upper = %f",lowerlimit,upperlimit);
-    // Calculate SOC from upper and lower limits
-    return (value - lowerlimit) * 100.0f / (upperlimit - lowerlimit);
+    if (upperlimit <= lowerlimit)
+    {
+        ESP_LOGW(TAG, "BMS DoD limits invalid (lower %f, upper %f): using raw SoC", lowerlimit, upperlimit);
+        return value / 10.0f;
+    }
+    // Calculate SOC from upper and lower limits; the BMS can report outside them
+    float soc = (value - lowerlimit) * 100.0f / (upperlimit - lowerlimit);
+    if (soc < 0.0f)
+        soc = 0.0f;
+    else if (soc > 100.0f)
+        soc = 100.0f;
+    return soc;
 }
 
 void OvmsVehicleMgEv::calculateRange(float soc) {

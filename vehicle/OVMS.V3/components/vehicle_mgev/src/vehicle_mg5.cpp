@@ -42,6 +42,10 @@ const OvmsPoller::poll_pid_t mg5_obdii_polls[] =
     { gwmId, gwmId | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, odoPid, {  0, 999, 30, 0  }, 0, ISOTP_STD },// 0xb921u
     { gwmId, gwmId | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, vinPid, {  0, 999, 999, 0  }, 0, ISOTP_STD },// 0xf190u
 
+    // SoC: 0xB046 (scaled by the BMS DoD limits) where the BMS answers it -- a
+    // 2022 MG5 LR refuses 0x5B with NRC 0x11 serviceNotSupported. 0x5B stays
+    // for any BMS that only answers that; B046 takes precedence (mg_poll_bms.cpp).
+    { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batterySoCPid, {  0, 15, 6, 60  }, 0, ISOTP_STD },// 0xb046u
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIICURRENT, socPid, {  0, 15, 6, 60  }, 0, ISOTP_STD },// 0X5bu
 
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, bmsStatusPid, {  0, 15, 6, 0  }, 0, ISOTP_STD },
@@ -49,7 +53,6 @@ const OvmsPoller::poll_pid_t mg5_obdii_polls[] =
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batteryCurrentPid, {  0, 5, 30, 0  }, 0, ISOTP_STD },
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batteryVoltagePid, {  0, 5, 30, 0  }, 0, ISOTP_STD },
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batteryResistancePid, {  0, 30, 30, 0  }, 0, ISOTP_STD },
-//    { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batterySoCPid, {  0, 30, 30, 60  }, 0, ISOTP_STD },
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batteryCoolantTempPid, {  0, 30, 30, 0  }, 0, ISOTP_STD },
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batterySoHPid, {  0, 120, 120, 0  }, 0, ISOTP_STD },
     { bmsMk2Id, bmsMk2Id | rxFlag, VEHICLE_POLL_TYPE_OBDIIEXTENDED, batteryTempPid, {  0, 30, 30, 0  }, 0, ISOTP_STD },
@@ -137,7 +140,12 @@ OvmsVehicleMg5::OvmsVehicleMg5()
     
     // Set manual polling on
     MyConfig.SetParamValueInt("xmg", "polling.manual", 1);
-    
+
+    // DoD overrides under their own keys: xmg bms.dod.* may hold limits that the
+    // MG4 or the ZS EV features page saved, which don't apply to the MG5
+    m_dod_lower_param = "mg5.dod.lower";
+    m_dod_upper_param = "mg5.dod.upper";
+
     // Set up initial values from the version setting
     int VehicleVersion = MyConfig.GetParamValueInt("xmg", "vehval", 0);
     if(VehicleVersion == 0) {

@@ -108,6 +108,10 @@ class OvmsVehicleMgEv : public OvmsVehicle
     OvmsMetricFloat *m_vcu_dcdc_input_current, *m_vcu_dcdc_input_voltage, *m_vcu_dcdc_output_current, *m_vcu_dcdc_output_voltage;
     OvmsMetricFloat *m_vcu_dcdc_temp;
     OvmsMetricFloat* m_soc_raw;
+    bool m_soc_b046_seen = false; // the BMS answers batterySoCPid: it, not socPid, sets v.b.soc
+    // xmg config keys that override m_dod_lower / m_dod_upper in calculateSoc()
+    const char* m_dod_lower_param = "bms.dod.lower";
+    const char* m_dod_upper_param = "bms.dod.upper";
     OvmsMetricFloat* m_motor_coolant_temp;
     OvmsMetricFloat* m_motor_torque;
     OvmsMetricBool* m_radiator_fan;
